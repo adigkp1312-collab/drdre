@@ -9,82 +9,141 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <main class="app-shell">
-      <header class="app-bar">
-        <a class="wordmark" href="./" aria-label="Telivu home">TELIVU</a>
-        <button class="language-button" type="button" aria-label="Current language: English">
-          <span>ENGLISH</span>
-          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3 6 5 5 5-5" /></svg>
-        </button>
-      </header>
+    <main class="phone-card" aria-labelledby="screen-title">
+      <p class="eyebrow">Start with what you notice</p>
 
-      <section class="voice-screen" aria-labelledby="screen-title">
-        <div class="session-meta" aria-label="New private conversation">
-          <span>NEW CONVERSATION</span><span class="session-rule"></span>
-          <span class="privacy-state"><i aria-hidden="true"></i>PRIVATE</span>
+      <section class="voice-map" id="voice-map" aria-label="Telivu is ready to listen">
+        <svg class="scene" viewBox="0 0 318 215" role="img" aria-labelledby="scene-title scene-description">
+          <title id="scene-title">Telivu voice companion</title>
+          <desc id="scene-description">A calm face, voice signal, and document connected in a monochrome space.</desc>
+          <defs>
+            <radialGradient id="avatar-tone" cx="38%" cy="30%" r="76%">
+              <stop offset="0" stop-color="#f7f7f7" stop-opacity=".9" />
+              <stop offset=".58" stop-color="#f7f7f7" stop-opacity=".55" />
+              <stop offset="1" stop-color="#000000" stop-opacity=".55" />
+            </radialGradient>
+            <radialGradient id="companion-glow" cx="100%" cy="50%" r="70%">
+              <stop offset="0" stop-color="#f7f7f7" />
+              <stop offset=".48" stop-color="#f7f7f7" />
+              <stop offset=".78" stop-color="#f7f7f7" stop-opacity=".18" />
+              <stop offset="1" stop-color="#f7f7f7" stop-opacity="0" />
+            </radialGradient>
+            <filter id="scene-grain" x="-20%" y="-20%" width="140%" height="140%">
+              <feTurbulence type="fractalNoise" baseFrequency=".13" numOctaves="3" seed="17" result="noise" />
+              <feBlend in="SourceGraphic" in2="noise" mode="soft-light" />
+            </filter>
+            <clipPath id="face-clip"><circle cx="155" cy="191" r="51" /></clipPath>
+          </defs>
+
+          <rect width="318" height="215" fill="#5e5e5e" />
+          <rect width="318" height="215" fill="#000000" opacity=".38" />
+
+          <g class="stars" fill="#f7f7f7" opacity=".42">
+            <circle cx="36" cy="10" r=".8" /><circle cx="110" cy="13" r=".6" />
+            <circle cx="172" cy="20" r=".8" /><circle cx="233" cy="11" r=".6" />
+            <circle cx="282" cy="30" r=".7" /><circle cx="210" cy="67" r=".6" />
+            <circle cx="36" cy="69" r=".6" /><circle cx="104" cy="89" r=".7" />
+            <circle cx="270" cy="89" r=".7" /><circle cx="74" cy="121" r=".7" />
+            <circle cx="249" cy="144" r=".6" /><circle cx="25" cy="168" r=".7" />
+          </g>
+
+          <circle cx="342" cy="107" r="108" fill="url(#companion-glow)" />
+          <circle cx="345" cy="107" r="70" fill="#f7f7f7" />
+          <path d="M279 95q15-13 31 0M282 106h12M304 106h12M298 104l-2 18 7 3M287 137q12 8 24 0" fill="none" stroke="#000" stroke-width="1.4" />
+
+          <g class="voice-source" transform="translate(49 100) rotate(-14)">
+            <ellipse rx="45" ry="37" fill="url(#avatar-tone)" opacity=".55" />
+            <ellipse class="signal-ring signal-ring-a" rx="78" ry="10" fill="none" stroke="#f7f7f7" stroke-width="1.2" />
+            <ellipse class="signal-ring signal-ring-b" rx="68" ry="7" fill="none" stroke="#f7f7f7" stroke-width=".7" stroke-dasharray="3 5" />
+            <g class="voice-bars" fill="#f7f7f7" transform="rotate(14) translate(-17 -18)">
+              <rect x="0" y="12" width="3" height="12" /><rect x="8" y="7" width="3" height="22" />
+              <rect x="16" y="1" width="3" height="34" /><rect x="24" y="9" width="3" height="18" />
+              <rect x="32" y="5" width="3" height="26" />
+            </g>
+          </g>
+
+          <path d="M80 112 142 167M142 167l109-17" fill="none" stroke="#f7f7f7" stroke-width="1" opacity=".44" />
+          <path d="M82 115q78-27 165 28" fill="none" stroke="#f7f7f7" stroke-width="1" stroke-dasharray="3 5" opacity=".34" />
+
+          <circle cx="155" cy="191" r="51" fill="url(#avatar-tone)" stroke="#f7f7f7" stroke-width="1.7" opacity=".9" />
+          <g clip-path="url(#face-clip)" filter="url(#scene-grain)" fill="none" stroke="#f7f7f7" stroke-width="1.5" opacity=".7">
+            <path d="M119 180q16-19 28-9t17 3q12-6 27 8t8 25q-20 11-26-2t-18-3q-18 12-24 1t-12-23z" />
+            <path d="M150 153q3 11-7 14t-14-5m54 4q-12 8-8 18t-10 11" />
+          </g>
+        </svg>
+
+        <span class="tag tag-light voice-tag">Your voice</span>
+        <span class="map-intro">with</span>
+        <span class="tag tag-dark telivu-tag">Telivu</span>
+        <span class="tag you-tag">You</span>
+        <span class="map-status" id="map-status"><i></i>Ready</span>
+      </section>
+
+      <section class="story" aria-label="Ways to start">
+        <button class="story-row talk-row" id="talk-button" type="button" aria-pressed="false" aria-label="Tap to talk">
+          <span class="icon-cell voice-icon" aria-hidden="true">
+            <svg viewBox="0 0 64 64">
+              <circle cx="32" cy="32" r="28" fill="#5e5e5e" opacity=".07" />
+              <circle cx="32" cy="32" r="21" fill="#f7f7f7" stroke="#5e5e5e" stroke-width=".7" />
+              <path d="M27 20h10v18H27zM23 34v1c0 6 4 10 9 10s9-4 9-10v-1M32 45v7M27 52h10" fill="none" stroke="#000" stroke-width="1.3" />
+            </svg>
+          </span>
+          <span class="copy-row">
+            <h1 id="screen-title">Tell me what’s going on.</h1>
+            <span class="label" id="talk-label">Your voice</span>
+          </span>
+        </button>
+
+        <div class="story-row attachment-row">
+          <span class="icon-cell report-icon" aria-hidden="true">
+            <svg viewBox="0 0 54 54">
+              <path d="M8 6v41h42" fill="none" stroke="#5e5e5e" stroke-width="1" opacity=".65" />
+              <path d="M10 12q10 22 35 30" fill="none" stroke="#5e5e5e" stroke-width="1" stroke-dasharray="3 4" opacity=".65" />
+              <rect x="22" y="14" width="23" height="28" fill="#f7f7f7" stroke="#5e5e5e" stroke-width=".8" />
+              <path d="M27 23h13M27 28h13M27 33h9" stroke="#5e5e5e" stroke-width=".8" />
+            </svg>
+          </span>
+          <span class="copy-row">
+            <span class="story-line">or show me what you see.</span>
+            <span class="attachment-actions">
+              <button class="label label-dark" id="add-image" type="button">Add image</button>
+              <button class="label label-quiet" id="add-file" type="button">Add file</button>
+            </span>
+          </span>
         </div>
 
-        <section class="avatar-stage" id="avatar-stage" aria-label="Telivu is ready to listen">
-          <div class="stage-label">YOUR HEALTH COMPANION</div>
-          <div class="stage-state" id="stage-state">READY</div>
-          <svg class="avatar-art" viewBox="0 0 320 250" role="img" aria-labelledby="avatar-title avatar-description" data-illustration-seed="17">
-            <title id="avatar-title">Telivu companion avatar</title>
-            <desc id="avatar-description">A calm monochrome human face surrounded by subtle voice lines.</desc>
-            <g class="pencil-field" fill="none" stroke="#5E5E5E" stroke-width="1">
-              <path d="M30 55h46M22 68h64M240 55h48M232 68h66" />
-              <path d="M50 94h-24M270 94h24M44 106H18M276 106h26" stroke-dasharray="2 5" />
-              <path d="M49 188l-20 12M57 196l-19 12M271 188l20 12M263 196l19 12" />
-            </g>
-            <g class="voice-rings" fill="none" stroke="#5E5E5E">
-              <path d="M103 63c-20 14-31 36-31 61s11 47 31 61" stroke-dasharray="3 6" />
-              <path d="M217 63c20 14 31 36 31 61s-11 47-31 61" stroke-dasharray="3 6" />
-              <path d="M91 47c-25 18-40 46-40 77s15 59 40 77" opacity=".55" />
-              <path d="M229 47c25 18 40 46 40 77s-15 59-40 77" opacity=".55" />
-            </g>
-            <circle class="avatar-halo" cx="160" cy="124" r="81" fill="none" stroke="#5E5E5E" stroke-width="1" stroke-dasharray="2 4" />
-            <path class="avatar-disc" d="M160 48c44 0 75 31 75 76 0 43-31 76-75 76-43 0-75-33-75-76 0-45 32-76 75-76Z" fill="#F7F7F7" stroke="#5E5E5E" />
-            <g class="avatar-face" fill="none" stroke="#000000" stroke-linecap="square">
-              <path d="M125 111c9-7 19-7 28 0M167 111c9-7 19-7 28 0" stroke-width="2" />
-              <path d="M129 121h18M173 121h18" stroke-width="3" />
-              <path d="M160 119c-3 14-5 23-4 28l9 3" stroke-width="1.5" />
-              <path class="avatar-mouth" d="M143 166c11 7 23 7 34 0" stroke-width="2" />
-              <path d="M116 84c10-17 27-25 44-25 19 0 35 8 45 25" stroke="#5E5E5E" />
-            </g>
-            <g class="listening-wave" fill="#F7F7F7" aria-hidden="true">
-              <rect x="130" y="222" width="3" height="10" /><rect x="140" y="217" width="3" height="20" />
-              <rect x="150" y="211" width="3" height="32" /><rect x="160" y="216" width="3" height="22" />
-              <rect x="170" y="208" width="3" height="38" /><rect x="180" y="215" width="3" height="24" />
-              <rect x="190" y="220" width="3" height="14" />
-            </g>
-          </svg>
-          <p class="avatar-caption" id="avatar-caption">READY WHEN YOU ARE</p>
-        </section>
+        <div class="story-row companion-row">
+          <span class="icon-cell companion-icon" aria-hidden="true">
+            <svg viewBox="0 0 70 46">
+              <g transform="translate(34 23) rotate(-13)">
+                <circle r="12" fill="#5e5e5e" opacity=".22" />
+                <ellipse rx="28" ry="5" fill="none" stroke="#5e5e5e" stroke-width="2" />
+                <ellipse rx="28" ry="5" fill="none" stroke="#f7f7f7" stroke-width=".7" />
+              </g>
+            </svg>
+          </span>
+          <span class="copy-row">
+            <span class="story-line" id="response-copy">Take your time. I’m ready.</span>
+            <span class="label label-muted">Plain English</span>
+          </span>
+        </div>
 
-        <section class="welcome-copy">
-          <p class="eyebrow">VOICE FIRST · TYPE LESS</p>
-          <h1 id="screen-title">Tell me what’s going on.</h1>
-          <p id="support-copy">Speak naturally. Add a photo or report if it helps.</p>
-        </section>
-
-        <section class="input-area" aria-label="Conversation controls">
-          <div class="action-dock">
-            <button class="attachment-button" id="add-image" type="button">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" /><circle cx="9" cy="10" r="2" /><path d="m4 18 5-5 4 4 3-3 4 4" /></svg>
-              <span>ADD IMAGE</span>
-            </button>
-            <button class="talk-button" id="talk-button" type="button" aria-pressed="false" aria-label="Tap to talk">
-              <svg class="mic-icon" viewBox="0 0 32 32" aria-hidden="true"><rect x="11" y="3" width="10" height="17" /><path d="M7 15v1c0 5 4 9 9 9s9-4 9-9v-1M16 25v4M11 29h10" /></svg>
-              <span class="button-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
-            </button>
-            <button class="attachment-button" id="add-file" type="button">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h9l5 5v13H5zM14 3v6h5M8 14h8M8 17h6" /></svg>
-              <span>ADD FILE</span>
-            </button>
-          </div>
-          <p class="talk-instruction" id="talk-instruction"><strong>TAP TO TALK</strong><span>English · captions on</span></p>
-        </section>
-        <p class="safety-note">NOT FOR DIAGNOSIS OR EMERGENCIES.</p>
+        <div class="divider"></div>
       </section>
+
+      <p class="footer-copy">Speak naturally. Add a photo or report only if it helps.</p>
+      <p class="safety-copy">Telivu is not for diagnosis or emergencies.</p>
+
+      <div class="progress" aria-hidden="true"></div>
+      <button class="rail-control" id="rail-control" type="button" aria-label="Tap to talk">
+        <svg viewBox="0 0 44 38" aria-hidden="true">
+          <g class="rail-wings" fill="#5e5e5e" stroke="#000" stroke-width=".55">
+            <path d="M21 16C17 4 8 2 3 6c3 7 7 13 17 15-8-1-13 3-13 10 7 0 12-3 15-9z" />
+            <path d="M23 16C27 4 36 2 41 6c-3 7-7 13-17 15 8-1 13 3 13 10-7 0-12-3-15-9z" />
+          </g>
+          <path d="M19 10h6v12h-6zM16 19v1c0 4 3 7 6 7s6-3 6-7v-1M22 27v6" fill="none" stroke="#000" stroke-width="1.15" />
+        </svg>
+      </button>
 
       <input class="visually-hidden" id="image-input" type="file" accept="image/*" tabindex="-1" />
       <input class="visually-hidden" id="file-input" type="file" accept="image/*,.pdf" tabindex="-1" />
