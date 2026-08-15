@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#F7F7F7" />
+    <meta name="description" content="Telivu voice-first health companion interface preview." />
+    <title>Telivu — Voice First</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="app-bar">
+        <a class="wordmark" href="./" aria-label="Telivu home">TELIVU</a>
+        <button class="language-button" type="button" aria-label="Current language: English">
+          <span>ENGLISH</span>
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3 6 5 5 5-5" /></svg>
+        </button>
+      </header>
+
+      <section class="voice-screen" aria-labelledby="screen-title">
+        <div class="session-meta" aria-label="New private conversation">
+          <span>NEW CONVERSATION</span><span class="session-rule"></span>
+          <span class="privacy-state"><i aria-hidden="true"></i>PRIVATE</span>
+        </div>
+
+        <section class="avatar-stage" id="avatar-stage" aria-label="Telivu is ready to listen">
+          <div class="stage-label">YOUR HEALTH COMPANION</div>
+          <div class="stage-state" id="stage-state">READY</div>
+          <svg class="avatar-art" viewBox="0 0 320 250" role="img" aria-labelledby="avatar-title avatar-description" data-illustration-seed="17">
+            <title id="avatar-title">Telivu companion avatar</title>
+            <desc id="avatar-description">A calm monochrome human face surrounded by subtle voice lines.</desc>
+            <g class="pencil-field" fill="none" stroke="#5E5E5E" stroke-width="1">
+              <path d="M30 55h46M22 68h64M240 55h48M232 68h66" />
+              <path d="M50 94h-24M270 94h24M44 106H18M276 106h26" stroke-dasharray="2 5" />
+              <path d="M49 188l-20 12M57 196l-19 12M271 188l20 12M263 196l19 12" />
+            </g>
+            <g class="voice-rings" fill="none" stroke="#5E5E5E">
+              <path d="M103 63c-20 14-31 36-31 61s11 47 31 61" stroke-dasharray="3 6" />
+              <path d="M217 63c20 14 31 36 31 61s-11 47-31 61" stroke-dasharray="3 6" />
+              <path d="M91 47c-25 18-40 46-40 77s15 59 40 77" opacity=".55" />
+              <path d="M229 47c25 18 40 46 40 77s-15 59-40 77" opacity=".55" />
+            </g>
+            <circle class="avatar-halo" cx="160" cy="124" r="81" fill="none" stroke="#5E5E5E" stroke-width="1" stroke-dasharray="2 4" />
+            <path class="avatar-disc" d="M160 48c44 0 75 31 75 76 0 43-31 76-75 76-43 0-75-33-75-76 0-45 32-76 75-76Z" fill="#F7F7F7" stroke="#5E5E5E" />
+            <g class="avatar-face" fill="none" stroke="#000000" stroke-linecap="square">
+              <path d="M125 111c9-7 19-7 28 0M167 111c9-7 19-7 28 0" stroke-width="2" />
+              <path d="M129 121h18M173 121h18" stroke-width="3" />
+              <path d="M160 119c-3 14-5 23-4 28l9 3" stroke-width="1.5" />
+              <path class="avatar-mouth" d="M143 166c11 7 23 7 34 0" stroke-width="2" />
+              <path d="M116 84c10-17 27-25 44-25 19 0 35 8 45 25" stroke="#5E5E5E" />
+            </g>
+            <g class="listening-wave" fill="#F7F7F7" aria-hidden="true">
+              <rect x="130" y="222" width="3" height="10" /><rect x="140" y="217" width="3" height="20" />
+              <rect x="150" y="211" width="3" height="32" /><rect x="160" y="216" width="3" height="22" />
+              <rect x="170" y="208" width="3" height="38" /><rect x="180" y="215" width="3" height="24" />
+              <rect x="190" y="220" width="3" height="14" />
+            </g>
+          </svg>
+          <p class="avatar-caption" id="avatar-caption">READY WHEN YOU ARE</p>
+        </section>
+
+        <section class="welcome-copy">
+          <p class="eyebrow">VOICE FIRST · TYPE LESS</p>
+          <h1 id="screen-title">Tell me what’s going on.</h1>
+          <p id="support-copy">Speak naturally. Add a photo or report if it helps.</p>
+        </section>
+
+        <section class="input-area" aria-label="Conversation controls">
+          <div class="action-dock">
+            <button class="attachment-button" id="add-image" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" /><circle cx="9" cy="10" r="2" /><path d="m4 18 5-5 4 4 3-3 4 4" /></svg>
+              <span>ADD IMAGE</span>
+            </button>
+            <button class="talk-button" id="talk-button" type="button" aria-pressed="false" aria-label="Tap to talk">
+              <svg class="mic-icon" viewBox="0 0 32 32" aria-hidden="true"><rect x="11" y="3" width="10" height="17" /><path d="M7 15v1c0 5 4 9 9 9s9-4 9-9v-1M16 25v4M11 29h10" /></svg>
+              <span class="button-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+            </button>
+            <button class="attachment-button" id="add-file" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h9l5 5v13H5zM14 3v6h5M8 14h8M8 17h6" /></svg>
+              <span>ADD FILE</span>
+            </button>
+          </div>
+          <p class="talk-instruction" id="talk-instruction"><strong>TAP TO TALK</strong><span>English · captions on</span></p>
+        </section>
+        <p class="safety-note">NOT FOR DIAGNOSIS OR EMERGENCIES.</p>
+      </section>
+
+      <input class="visually-hidden" id="image-input" type="file" accept="image/*" tabindex="-1" />
+      <input class="visually-hidden" id="file-input" type="file" accept="image/*,.pdf" tabindex="-1" />
+      <div class="selection-notice" id="selection-notice" role="status" aria-live="polite"></div>
+    </main>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
