@@ -6,18 +6,19 @@ enum TelivuColor {
     static let graphite = Color(red: 94 / 255, green: 94 / 255, blue: 94 / 255)
     static let paper = Color(red: 247 / 255, green: 247 / 255, blue: 247 / 255)
 
-    static let lineSoft = graphite.opacity(0.22)
-    static let lineStrong = graphite.opacity(0.48)
-    static let paperMuted = paper.opacity(0.62)
-    static let paperQuiet = paper.opacity(0.72)
+    static let lineSubtle = graphite.opacity(0.18)
+    static let lineDefault = graphite.opacity(0.32)
+    static let paperQuiet = paper.opacity(0.70)
 }
 
 enum TelivuSpacing {
-    static let small: CGFloat = 8
-    static let medium: CGFloat = 12
+    static let xxs: CGFloat = 4
+    static let xs: CGFloat = 8
+    static let small: CGFloat = 12
     static let standard: CGFloat = 16
     static let content: CGFloat = 20
     static let large: CGFloat = 24
+    static let xLarge: CGFloat = 32
 }
 
 enum TelivuFont {
@@ -37,20 +38,20 @@ enum TelivuFont {
         .custom(technicalName, size: size, relativeTo: style)
     }
 
-    static let wordmark = technical(14, relativeTo: .headline)
-    static let control = technical(10, relativeTo: .caption)
-    static let micro = technical(9, relativeTo: .caption2)
-    static let hero = editorial(39, relativeTo: .largeTitle)
-    static let support = editorial(16, relativeTo: .body)
+    static let wordmark = technical(15, relativeTo: .headline)
+    static let label = technical(11, relativeTo: .caption)
+    static let micro = technical(10, relativeTo: .caption2)
+    static let screenTitle = editorial(32, relativeTo: .title)
+    static let body = editorial(17, relativeTo: .body)
+    static let compactBody = editorial(15, relativeTo: .body)
 }
 
 enum TelivuLayout {
     static let horizontalInset: CGFloat = 20
-    static let topBarHeight: CGFloat = 52
     static let minimumTarget: CGFloat = 44
-    static let attachmentHeight: CGFloat = 58
-    static let talkSize: CGFloat = 88
-    static let compactTalkSize: CGFloat = 78
+    static let attachmentHeight: CGFloat = 56
+    static let voiceActionWidth: CGFloat = 88
+    static let companionHeight: CGFloat = 215
 }
 
 struct TelivuFlatPressStyle: ButtonStyle {
@@ -63,11 +64,7 @@ struct TelivuFlatPressStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .opacity(configuration.isPressed ? 0.82 : 1)
-            .background(
-                configuration.isPressed
-                    ? (inverse ? TelivuColor.paper.opacity(0.12) : TelivuColor.ink.opacity(0.06))
-                    : Color.clear
-            )
+            .background(configuration.isPressed ? (inverse ? TelivuColor.paper.opacity(0.12) : TelivuColor.ink.opacity(0.06)) : Color.clear)
     }
 }
 

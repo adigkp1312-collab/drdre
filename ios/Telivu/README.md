@@ -8,10 +8,10 @@ Native SwiftUI implementation of the single voice-first Telivu home screen.
 - exact ink `#000000`, graphite `#5E5E5E`, and paper `#F7F7F7` palette;
 - Bodoni 72 / Monaco rendered-reference font pair with explicit fallbacks;
 - reusable native components for the top bar, session metadata, avatar stage,
-  attachment controls, voice control, waveform, and selection notice;
-- ready and listening states with Reduce Motion support;
+  attachment controls, voice control, status, and selected-evidence summary;
+- ready, listening, processing, and response-ready states with Reduce Motion support;
 - native `PhotosPicker` and `fileImporter` entry points;
-- a default no-scroll phone layout and an accessibility-size scroll fallback.
+- persistent voice actions using `safeAreaInset` and a Dynamic Type-safe scroll layout.
 
 The microphone state is a UI prototype. Audio capture, transcription, OpenAI APIs,
 uploads, persistence, and medical responses are deliberately not connected yet.
@@ -37,6 +37,13 @@ ios/Telivu/scripts/validate-ui.sh
 
 The structural validation parses every Swift file and checks the locked visual rules.
 Full simulator validation still requires a selected full Xcode installation.
+
+## Design authority
+
+Apple Human Interface Guidelines govern native behaviour, accessibility, safe
+areas, and system pickers. The Telivu Editorial system governs the visual layer:
+ink, graphite, paper, Bodoni/Monaco roles, square in-app surfaces, thin dividers,
+and deterministic monochrome companion art. No third-party UI library is used.
 
 ## Font decision
 

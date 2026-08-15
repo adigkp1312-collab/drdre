@@ -1,3 +1,4 @@
+import PhotosUI
 import SwiftUI
 
 struct TelivuTopBar: View {
@@ -8,76 +9,62 @@ struct TelivuTopBar: View {
             Text("TELIVU")
                 .font(TelivuFont.wordmark)
                 .fontWeight(.bold)
-                .tracking(1.4)
+                .tracking(2.1)
                 .accessibilityAddTraits(.isHeader)
 
             Spacer()
 
             Button(action: languageAction) {
-                HStack(spacing: 7) {
-                    Text("ENGLISH")
-                        .font(TelivuFont.control)
-                        .tracking(0.35)
-                    Image(systemName: "chevron.down")
-                        .font(.system(size: 10, weight: .regular))
+                HStack(spacing: 5) {
+                    Text("ENGLISH").font(TelivuFont.label).tracking(0.4)
+                    Image(systemName: "chevron.down").font(.system(size: 10, weight: .regular))
                 }
                 .foregroundStyle(TelivuColor.graphite)
-                .frame(minWidth: 82, minHeight: TelivuLayout.minimumTarget, alignment: .trailing)
+                .frame(minWidth: 92, minHeight: TelivuLayout.minimumTarget, alignment: .trailing)
                 .contentShape(Rectangle())
             }
             .buttonStyle(TelivuFlatPressStyle())
             .accessibilityLabel("Current language, English")
         }
-        .frame(height: TelivuLayout.topBarHeight)
         .padding(.horizontal, TelivuLayout.horizontalInset)
-        .overlay(alignment: .bottom) {
-            Rectangle()
-                .fill(TelivuColor.lineSoft)
-                .frame(height: 1)
-        }
+        .frame(minHeight: 76)
+        .overlay(alignment: .bottom) { Rectangle().fill(TelivuColor.lineSubtle).frame(height: 1) }
     }
 }
 
 struct TelivuSessionMetadata: View {
     var body: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: TelivuSpacing.xs) {
             Text("NEW CONVERSATION")
-            Rectangle()
-                .fill(TelivuColor.lineStrong)
-                .frame(height: 1)
+            Rectangle().fill(TelivuColor.lineDefault).frame(height: 1)
             HStack(spacing: 6) {
-                Rectangle()
-                    .fill(TelivuColor.ink)
-                    .frame(width: 6, height: 6)
+                Rectangle().fill(TelivuColor.ink).frame(width: 6, height: 6)
                 Text("PRIVATE")
             }
         }
         .telivuTechnicalLabel()
         .foregroundStyle(TelivuColor.graphite)
-        .frame(minHeight: 20)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("New private conversation")
     }
 }
 
-struct TelivuAvatarStage: View {
+struct TelivuCompanionPanel: View {
     let state: TelivuVoiceState
-    let height: CGFloat
 
     var body: some View {
         ZStack {
             TelivuColor.ink
+            TelivuCompanionArt(isListening: state == .listening)
+                .accessibilityHidden(true)
 
             VStack(spacing: 0) {
                 HStack {
-                    Text("YOUR HEALTH COMPANION")
-                        .foregroundStyle(TelivuColor.paperMuted)
+                    Text("YOUR HEALTH COMPANION").foregroundStyle(TelivuColor.paperQuiet)
                     Spacer()
                     HStack(spacing: 6) {
-                        Rectangle()
-                            .fill(TelivuColor.paper)
-                            .frame(width: 6, height: 6)
-                        Text(state.stageStatus)
+                        Rectangle().fill(TelivuColor.paper).frame(width: 6, height: 6)
+                        Text(state.panelStatus)
                     }
                     .foregroundStyle(TelivuColor.paper)
                 }
@@ -85,244 +72,216 @@ struct TelivuAvatarStage: View {
                 .padding(.horizontal, 14)
                 .padding(.top, 13)
 
-                Spacer(minLength: 0)
+                Spacer()
 
-                TelivuCompanionPortrait(isListening: state == .listening)
-                    .padding(.horizontal, 10)
-                    .accessibilityHidden(true)
-
-                Spacer(minLength: 0)
-
-                Text(state.stageCaption)
+                Text(state.panelCaption)
                     .telivuTechnicalLabel()
                     .foregroundStyle(TelivuColor.paperQuiet)
-                    .padding(.bottom, 12)
+                    .padding(.bottom, 14)
             }
         }
-        .frame(height: height)
-        .overlay {
-            Rectangle().stroke(TelivuColor.ink, lineWidth: 1)
-        }
+        .frame(height: TelivuLayout.companionHeight)
+        .overlay { Rectangle().stroke(TelivuColor.ink, lineWidth: 1) }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(state == .listening ? "Telivu is listening" : "Telivu is ready to listen")
+        .accessibilityLabel("Telivu is \(state.panelStatus.lowercased())")
     }
 }
 
-private struct TelivuCompanionPortrait: View {
+private struct TelivuCompanionArt: View {
     let isListening: Bool
 
     var body: some View {
         GeometryReader { proxy in
-            let width = proxy.size.width
-            let height = proxy.size.height
-            let scale = min(width / 320, height / 250)
-            let canvasWidth = 320 * scale
-            let canvasHeight = 250 * scale
-            let x = (width - canvasWidth) / 2
-            let y = (height - canvasHeight) / 2
-
+            let scale = min(proxy.size.width / 320, proxy.size.height / 215)
             ZStack {
-                voiceField
-                portrait
-                if isListening {
-                    TelivuVoiceWave()
-                        .frame(width: 64, height: 38)
-                        .offset(y: 99)
-                }
+                TelivuSignalLines()
+                Circle().stroke(TelivuColor.graphite, style: StrokeStyle(lineWidth: 1, dash: [2, 5])).frame(width: 164 * scale, height: 164 * scale)
+                Circle().stroke(TelivuColor.graphite.opacity(0.55), lineWidth: 1).frame(width: 186 * scale, height: 186 * scale)
+                TelivuFaceDisc().fill(TelivuColor.paper).overlay { TelivuFaceDisc().stroke(TelivuColor.graphite, lineWidth: 1) }.frame(width: 112 * scale, height: 112 * scale)
+                TelivuFaceMark().stroke(TelivuColor.ink, style: StrokeStyle(lineWidth: 1.5, lineCap: .square, lineJoin: .miter)).frame(width: 112 * scale, height: 112 * scale)
+                TelivuDocumentMark().stroke(TelivuColor.paper, lineWidth: 1).frame(width: 25 * scale, height: 34 * scale).offset(x: 96 * scale, y: 55 * scale)
+                TelivuVoiceBars(isListening: isListening).frame(width: 34 * scale, height: 54 * scale).offset(x: -112 * scale, y: 4 * scale)
             }
-            .frame(width: 320, height: 250)
-            .scaleEffect(scale, anchor: .topLeading)
-            .offset(x: x, y: y)
-        }
-    }
-
-    private var voiceField: some View {
-        ZStack {
-            Path { path in
-                path.move(to: CGPoint(x: 30, y: 55)); path.addLine(to: CGPoint(x: 76, y: 55))
-                path.move(to: CGPoint(x: 22, y: 68)); path.addLine(to: CGPoint(x: 86, y: 68))
-                path.move(to: CGPoint(x: 240, y: 55)); path.addLine(to: CGPoint(x: 288, y: 55))
-                path.move(to: CGPoint(x: 232, y: 68)); path.addLine(to: CGPoint(x: 298, y: 68))
-                path.move(to: CGPoint(x: 49, y: 188)); path.addLine(to: CGPoint(x: 29, y: 200))
-                path.move(to: CGPoint(x: 271, y: 188)); path.addLine(to: CGPoint(x: 291, y: 200))
-            }
-            .stroke(TelivuColor.graphite, lineWidth: 1)
-
-            Group {
-                ArcShape(startAngle: 120, endAngle: 240)
-                    .stroke(isListening ? TelivuColor.paper : TelivuColor.graphite, style: StrokeStyle(lineWidth: 1, dash: [3, 6]))
-                    .frame(width: 176, height: 176)
-                ArcShape(startAngle: -60, endAngle: 60)
-                    .stroke(isListening ? TelivuColor.paper : TelivuColor.graphite, style: StrokeStyle(lineWidth: 1, dash: [3, 6]))
-                    .frame(width: 176, height: 176)
-                Circle()
-                    .stroke(TelivuColor.graphite, style: StrokeStyle(lineWidth: 1, dash: [2, 4]))
-                    .frame(width: 162, height: 162)
-            }
-        }
-    }
-
-    private var portrait: some View {
-        ZStack {
-            TelivuFaceDisc()
-                .fill(TelivuColor.paper)
-                .overlay { TelivuFaceDisc().stroke(TelivuColor.graphite, lineWidth: 1) }
-                .frame(width: 150, height: 152)
-
-            Path { path in
-                path.move(to: CGPoint(x: 125, y: 111)); path.addCurve(to: CGPoint(x: 153, y: 111), control1: CGPoint(x: 134, y: 104), control2: CGPoint(x: 144, y: 104))
-                path.move(to: CGPoint(x: 167, y: 111)); path.addCurve(to: CGPoint(x: 195, y: 111), control1: CGPoint(x: 176, y: 104), control2: CGPoint(x: 186, y: 104))
-                path.move(to: CGPoint(x: 129, y: 121)); path.addLine(to: CGPoint(x: 147, y: 121))
-                path.move(to: CGPoint(x: 173, y: 121)); path.addLine(to: CGPoint(x: 191, y: 121))
-                path.move(to: CGPoint(x: 160, y: 119)); path.addCurve(to: CGPoint(x: 165, y: 150), control1: CGPoint(x: 157, y: 133), control2: CGPoint(x: 155, y: 146))
-                path.move(to: CGPoint(x: 116, y: 84)); path.addCurve(to: CGPoint(x: 205, y: 84), control1: CGPoint(x: 136, y: 51), control2: CGPoint(x: 184, y: 51))
-            }
-            .stroke(TelivuColor.ink, style: StrokeStyle(lineWidth: 1.6, lineCap: .square, lineJoin: .miter))
-
-            Path { path in
-                if isListening {
-                    path.move(to: CGPoint(x: 151, y: 163))
-                    path.addCurve(to: CGPoint(x: 169, y: 163), control1: CGPoint(x: 155, y: 157), control2: CGPoint(x: 165, y: 157))
-                    path.addCurve(to: CGPoint(x: 151, y: 163), control1: CGPoint(x: 167, y: 171), control2: CGPoint(x: 153, y: 171))
-                } else {
-                    path.move(to: CGPoint(x: 143, y: 166))
-                    path.addCurve(to: CGPoint(x: 177, y: 166), control1: CGPoint(x: 154, y: 173), control2: CGPoint(x: 166, y: 173))
-                }
-            }
-            .stroke(TelivuColor.ink, lineWidth: 2)
+            .frame(width: proxy.size.width, height: proxy.size.height)
         }
     }
 }
 
-private struct ArcShape: Shape {
-    let startAngle: Double
-    let endAngle: Double
-
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        path.addArc(
-            center: CGPoint(x: rect.midX, y: rect.midY),
-            radius: min(rect.width, rect.height) / 2,
-            startAngle: .degrees(startAngle),
-            endAngle: .degrees(endAngle),
-            clockwise: false
-        )
-        return path
+private struct TelivuSignalLines: View {
+    var body: some View {
+        GeometryReader { proxy in
+            Path { path in
+                let w = proxy.size.width
+                let h = proxy.size.height
+                path.move(to: CGPoint(x: w * 0.07, y: h * 0.31)); path.addLine(to: CGPoint(x: w * 0.25, y: h * 0.31))
+                path.move(to: CGPoint(x: w * 0.04, y: h * 0.38)); path.addLine(to: CGPoint(x: w * 0.27, y: h * 0.38))
+                path.move(to: CGPoint(x: w * 0.75, y: h * 0.31)); path.addLine(to: CGPoint(x: w * 0.93, y: h * 0.31))
+                path.move(to: CGPoint(x: w * 0.73, y: h * 0.38)); path.addLine(to: CGPoint(x: w * 0.96, y: h * 0.38))
+            }
+            .stroke(TelivuColor.graphite, lineWidth: 1)
+        }
     }
 }
 
 private struct TelivuFaceDisc: Shape {
+    func path(in rect: CGRect) -> Path { Path(ellipseIn: rect) }
+}
+
+private struct TelivuFaceMark: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
-        path.move(to: CGPoint(x: rect.midX, y: rect.minY))
-        path.addCurve(to: CGPoint(x: rect.maxX, y: rect.midY), control1: CGPoint(x: rect.maxX * 0.82, y: rect.minY), control2: CGPoint(x: rect.maxX, y: rect.height * 0.24))
-        path.addCurve(to: CGPoint(x: rect.midX, y: rect.maxY), control1: CGPoint(x: rect.maxX, y: rect.height * 0.80), control2: CGPoint(x: rect.maxX * 0.80, y: rect.maxY))
-        path.addCurve(to: CGPoint(x: rect.minX, y: rect.midY), control1: CGPoint(x: rect.width * 0.20, y: rect.maxY), control2: CGPoint(x: rect.minX, y: rect.height * 0.80))
-        path.addCurve(to: CGPoint(x: rect.midX, y: rect.minY), control1: CGPoint(x: rect.minX, y: rect.height * 0.24), control2: CGPoint(x: rect.width * 0.18, y: rect.minY))
-        path.closeSubpath()
+        path.move(to: CGPoint(x: rect.minX + rect.width * 0.20, y: rect.minY + rect.height * 0.34))
+        path.addQuadCurve(to: CGPoint(x: rect.minX + rect.width * 0.43, y: rect.minY + rect.height * 0.34), control: CGPoint(x: rect.minX + rect.width * 0.31, y: rect.minY + rect.height * 0.25))
+        path.move(to: CGPoint(x: rect.minX + rect.width * 0.57, y: rect.minY + rect.height * 0.34))
+        path.addQuadCurve(to: CGPoint(x: rect.minX + rect.width * 0.80, y: rect.minY + rect.height * 0.34), control: CGPoint(x: rect.minX + rect.width * 0.69, y: rect.minY + rect.height * 0.25))
+        path.move(to: CGPoint(x: rect.minX + rect.width * 0.50, y: rect.minY + rect.height * 0.37))
+        path.addLine(to: CGPoint(x: rect.minX + rect.width * 0.46, y: rect.minY + rect.height * 0.62))
+        path.addLine(to: CGPoint(x: rect.minX + rect.width * 0.54, y: rect.minY + rect.height * 0.66))
+        path.move(to: CGPoint(x: rect.minX + rect.width * 0.34, y: rect.minY + rect.height * 0.77))
+        path.addQuadCurve(to: CGPoint(x: rect.minX + rect.width * 0.66, y: rect.minY + rect.height * 0.77), control: CGPoint(x: rect.midX, y: rect.minY + rect.height * 0.90))
         return path
     }
 }
 
-struct TelivuVoiceWave: View {
+private struct TelivuDocumentMark: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.addRect(rect)
+        path.move(to: CGPoint(x: rect.minX + 6, y: rect.minY + 10)); path.addLine(to: CGPoint(x: rect.maxX - 6, y: rect.minY + 10))
+        path.move(to: CGPoint(x: rect.minX + 6, y: rect.minY + 16)); path.addLine(to: CGPoint(x: rect.maxX - 6, y: rect.minY + 16))
+        path.move(to: CGPoint(x: rect.minX + 6, y: rect.minY + 22)); path.addLine(to: CGPoint(x: rect.maxX - 10, y: rect.minY + 22))
+        return path
+    }
+}
+
+private struct TelivuVoiceBars: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var phase = false
 
-    let color: Color
-    private let levels: [CGFloat] = [10, 22, 32, 18, 12]
-
-    init(color: Color = TelivuColor.paper) {
-        self.color = color
-    }
+    let isListening: Bool
+    private let bars: [CGFloat] = [35, 54, 24, 45]
 
     var body: some View {
-        HStack(alignment: .center, spacing: 5) {
-            ForEach(Array(levels.enumerated()), id: \.offset) { index, level in
-                Rectangle()
-                    .fill(color)
-                    .frame(width: 3, height: level)
-                    .scaleEffect(
-                        x: 1,
-                        y: reduceMotion ? 1 : (phase == index.isMultiple(of: 2) ? 1 : 0.45),
-                        anchor: .center
-                    )
+        HStack(alignment: .center, spacing: 6) {
+            ForEach(Array(bars.enumerated()), id: \.offset) { index, height in
+                Rectangle().fill(TelivuColor.paper).frame(width: 3, height: height)
+                    .scaleEffect(x: 1, y: isListening && !reduceMotion && !index.isMultiple(of: 2) && phase ? 0.52 : 1, anchor: .center)
             }
         }
-        .animation(reduceMotion ? nil : .easeInOut(duration: 0.62).repeatForever(autoreverses: true), value: phase)
+        .animation(isListening && !reduceMotion ? .easeInOut(duration: 0.7).repeatForever(autoreverses: true) : nil, value: phase)
         .onAppear { phase = true }
     }
 }
 
-struct TelivuAttachmentLabel: View {
-    enum Kind: Equatable {
-        case image
-        case file
+struct TelivuEditorialIntro: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("VOICE FIRST · TYPE LESS").telivuTechnicalLabel().fontWeight(.bold).foregroundStyle(TelivuColor.graphite)
+            Text("Tell me what’s going on.")
+                .font(TelivuFont.screenTitle).fontWeight(.regular).tracking(-1.2)
+                .padding(.top, TelivuSpacing.xs).accessibilityAddTraits(.isHeader)
+            Text("Speak naturally. Add a photo or report only if it helps.")
+                .font(TelivuFont.body).foregroundStyle(TelivuColor.graphite).fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 10)
+        }
+        .padding(.vertical, TelivuSpacing.large)
+        .overlay(alignment: .bottom) { Rectangle().fill(TelivuColor.lineSubtle).frame(height: 1) }
+    }
+}
 
+struct TelivuAttachmentAction: View {
+    enum Kind { case image, file
         var title: String { self == .image ? "ADD IMAGE" : "ADD FILE" }
         var icon: String { self == .image ? "photo" : "doc" }
     }
-
     let kind: Kind
 
     var body: some View {
-        HStack(spacing: 7) {
-            Image(systemName: kind.icon)
-                .font(.system(size: 21, weight: .light))
-            Text(kind.title)
-                .font(TelivuFont.micro)
-                .tracking(0.25)
+        VStack(spacing: 2) {
+            Image(systemName: kind.icon).font(.system(size: 18, weight: .light))
+            Text(kind.title).font(TelivuFont.micro).tracking(0.25)
         }
         .foregroundStyle(TelivuColor.ink)
         .frame(maxWidth: .infinity, minHeight: TelivuLayout.attachmentHeight)
-        .background(TelivuColor.paper)
-        .overlay { Rectangle().stroke(TelivuColor.lineStrong, lineWidth: 1) }
+        .overlay { Rectangle().stroke(TelivuColor.ink, lineWidth: 1) }
         .contentShape(Rectangle())
     }
 }
 
-struct TelivuTalkButton: View {
-    let isListening: Bool
-    let size: CGFloat
+struct TelivuVoiceAction: View {
+    let state: TelivuVoiceState
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            ZStack {
-                Rectangle()
-                    .fill(isListening ? TelivuColor.paper : TelivuColor.ink)
-
-                if isListening {
-                    TelivuVoiceWave(color: TelivuColor.ink)
-                } else {
-                    Image(systemName: "mic.fill")
-                        .font(.system(size: 33, weight: .regular))
-                        .foregroundStyle(TelivuColor.paper)
-                }
+            VStack(spacing: 3) {
+                Image(systemName: state == .listening ? "stop.fill" : "mic.fill").font(.system(size: 22, weight: .regular))
+                Text(state.actionTitle).font(TelivuFont.micro).tracking(0.18)
             }
-            .frame(width: size, height: size)
-            .overlay {
-                Rectangle().stroke(TelivuColor.ink, lineWidth: isListening ? 2 : 1)
-            }
+            .foregroundStyle(foreground)
+            .frame(width: TelivuLayout.voiceActionWidth, minHeight: TelivuLayout.attachmentHeight)
+            .background(background)
+            .overlay { Rectangle().stroke(TelivuColor.ink, lineWidth: state == .listening ? 2 : 1) }
             .contentShape(Rectangle())
         }
-        .buttonStyle(TelivuFlatPressStyle(inverse: !isListening))
-        .accessibilityLabel(isListening ? "Stop listening" : "Tap to talk")
-        .accessibilityValue(isListening ? "Listening now" : "Ready")
+        .buttonStyle(TelivuFlatPressStyle(inverse: state != .listening))
+        .accessibilityLabel(state.actionAccessibilityLabel)
+        .accessibilityValue(state.panelStatus)
+    }
+
+    private var background: Color { state == .listening || state == .processing ? TelivuColor.paper : (state == .responseReady ? TelivuColor.graphite : TelivuColor.ink) }
+    private var foreground: Color { state == .listening || state == .processing ? TelivuColor.ink : TelivuColor.paper }
+}
+
+struct TelivuStatusRegion: View {
+    let copy: String
+    var body: some View {
+        Text(copy).telivuTechnicalLabel().foregroundStyle(TelivuColor.graphite).multilineTextAlignment(.center)
+            .frame(maxWidth: .infinity, minHeight: 42).accessibilityElement(children: .combine)
     }
 }
 
-struct TelivuSelectionNotice: View {
-    let message: String
+struct TelivuResponseRegion: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: TelivuSpacing.xs) {
+            Text("VOICE NOTE READY").telivuTechnicalLabel().foregroundStyle(TelivuColor.graphite)
+            Text("I can help you make sense of what you noticed. This is not a diagnosis.").font(TelivuFont.body)
+        }
+        .padding(.vertical, TelivuSpacing.small)
+        .overlay(alignment: .top) { Rectangle().fill(TelivuColor.lineSubtle).frame(height: 1) }
+        .overlay(alignment: .bottom) { Rectangle().fill(TelivuColor.lineSubtle).frame(height: 1) }
+    }
+}
+
+struct TelivuAttachmentSummary: View {
+    let attachment: TelivuAttachment
+    @Binding var selectedPhoto: PhotosPickerItem?
+    let remove: () -> Void
+    let replaceFile: () -> Void
 
     var body: some View {
-        Text(message)
-            .font(TelivuFont.micro)
-            .tracking(0.3)
-            .foregroundStyle(TelivuColor.paper)
-            .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
-            .padding(.horizontal, 15)
-            .background(TelivuColor.ink)
-            .overlay { Rectangle().stroke(TelivuColor.paper, lineWidth: 1) }
-            .accessibilityAddTraits(.isStaticText)
+        HStack(spacing: TelivuSpacing.small) {
+            Text("\(attachment.kind.label) SELECTED · \(attachment.name)")
+                .telivuTechnicalLabel().foregroundStyle(TelivuColor.graphite).lineLimit(2)
+            Spacer(minLength: 0)
+            Button("REMOVE", action: remove).font(TelivuFont.micro).foregroundStyle(TelivuColor.ink).frame(minHeight: 44)
+            if attachment.kind == .image {
+                PhotosPicker(selection: $selectedPhoto, matching: .images) {
+                    Text("REPLACE").font(TelivuFont.micro).foregroundStyle(TelivuColor.graphite).frame(minHeight: 44)
+                }
+            } else {
+                Button("REPLACE", action: replaceFile).font(TelivuFont.micro).foregroundStyle(TelivuColor.graphite).frame(minHeight: 44)
+            }
+        }
+        .padding(.vertical, TelivuSpacing.xs)
+        .overlay(alignment: .top) { Rectangle().fill(TelivuColor.lineSubtle).frame(height: 1) }
+    }
+}
+
+struct TelivuSafetyNote: View {
+    var body: some View {
+        Text("NOT FOR DIAGNOSIS OR EMERGENCIES.")
+            .telivuTechnicalLabel().foregroundStyle(TelivuColor.graphite.opacity(0.72))
+            .frame(maxWidth: .infinity).multilineTextAlignment(.center)
     }
 }

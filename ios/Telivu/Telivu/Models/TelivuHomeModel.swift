@@ -4,69 +4,109 @@ import Foundation
 enum TelivuVoiceState: Equatable {
     case ready
     case listening
+    case processing
+    case responseReady
 
-    var stageStatus: String {
+    var panelStatus: String {
         switch self {
-        case .ready: "READY"
+        case .ready, .responseReady: "READY"
         case .listening: "LISTENING"
+        case .processing: "PROCESSING"
         }
     }
 
-    var stageCaption: String {
+    var panelCaption: String {
         switch self {
         case .ready: "READY WHEN YOU ARE"
         case .listening: "I’M LISTENING · TAKE YOUR TIME"
-        }
-    }
-
-    var supportCopy: String {
-        switch self {
-        case .ready: "Speak naturally. Add a photo or report if it helps."
-        case .listening: "Speak in your own words. You can pause whenever you need."
+        case .processing: "YOUR WORDS STAY VISIBLE"
+        case .responseReady: "READY FOR WHAT COMES NEXT"
         }
     }
 
     var actionTitle: String {
         switch self {
         case .ready: "TAP TO TALK"
-        case .listening: "TAP TO STOP"
+        case .listening: "STOP"
+        case .processing: "SHOW RESPONSE"
+        case .responseReady: "SPEAK AGAIN"
         }
     }
 
-    var actionDetail: String {
+    var actionAccessibilityLabel: String {
         switch self {
-        case .ready: "English · captions on"
-        case .listening: "Listening now"
+        case .ready: "Tap to talk"
+        case .listening: "Stop listening"
+        case .processing: "Show response"
+        case .responseReady: "Speak again"
         }
     }
+
+    var statusCopy: String {
+        switch self {
+        case .ready: "TAP TO TALK · ENGLISH · CAPTIONS ON"
+        case .listening: "LISTENING · TAP STOP WHEN YOU ARE DONE"
+        case .processing: "VOICE NOTE SAVED · PREPARING A PLAIN-ENGLISH RESPONSE"
+        case .responseReady: "RESPONSE READY · YOU CAN ADD MORE CONTEXT"
+        }
+    }
+
+    var next: TelivuVoiceState {
+        switch self {
+        case .ready, .responseReady: .listening
+        case .listening: .processing
+        case .processing: .responseReady
+        }
+    }
+}
+
+enum TelivuAttachmentKind: Equatable {
+    case image
+    case file
+
+    var label: String { self == .image ? "IMAGE" : "FILE" }
+}
+
+struct TelivuAttachment: Equatable {
+    let kind: TelivuAttachmentKind
+    let name: String
 }
 
 @MainActor
 final class TelivuHomeModel: ObservableObject {
     @Published private(set) var voiceState: TelivuVoiceState = .ready
-    @Published var notice: String?
+    @Published private(set) var attachment: TelivuAttachment?
+    @Published private(set) var statusOverride: String?
 
+    var statusCopy: String { statusOverride ?? voiceState.statusCopy }
     var isListening: Bool { voiceState == .listening }
+    var showsResponse: Bool { voiceState == .responseReady }
 
-    func toggleListening() {
-        voiceState = isListening ? .ready : .listening
-        notice = nil
+    func advanceVoiceState() {
+        voiceState = voiceState.next
+        statusOverride = nil
     }
 
     func acknowledgeImage() {
-        showNotice("IMAGE SELECTED LOCALLY")
+        attachment = TelivuAttachment(kind: .image, name: "IMAGE SELECTED LOCALLY")
+        statusOverride = "ATTACHMENT ADDED LOCALLY · TAP TO TALK WHEN READY"
     }
 
     func acknowledgeFile(named name: String) {
-        let displayName = name.count > 24 ? String(name.prefix(21)) + "…" : name
-        showNotice("SELECTED LOCALLY · \(displayName)")
+        attachment = TelivuAttachment(kind: .file, name: clippedName(name))
+        statusOverride = "ATTACHMENT ADDED LOCALLY · TAP TO TALK WHEN READY"
+    }
+
+    func removeAttachment() {
+        attachment = nil
+        statusOverride = "ATTACHMENT REMOVED · TAP TO TALK WHEN READY"
     }
 
     func acknowledgeLanguage() {
-        showNotice("ENGLISH IS THE DEMO LANGUAGE")
+        statusOverride = "ENGLISH IS THE DEMO LANGUAGE"
     }
 
-    private func showNotice(_ message: String) {
-        notice = message
+    private func clippedName(_ name: String) -> String {
+        name.count > 25 ? String(name.prefix(22)) + "…" : name
     }
 }

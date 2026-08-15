@@ -36,6 +36,12 @@ rg -q 'static let paper = Color\(red: 247 / 255, green: 247 / 255, blue: 247 / 2
   "$PROJECT_DIR/Telivu/DesignSystem/TelivuDesignSystem.swift"
 rg -q 'PhotosPicker' "$PROJECT_DIR/Telivu/Screens/TelivuHomeView.swift"
 rg -q '\.fileImporter' "$PROJECT_DIR/Telivu/Screens/TelivuHomeView.swift"
-rg -q 'TelivuTalkButton' "$PROJECT_DIR/Telivu/Screens/TelivuHomeView.swift"
+rg -q 'TelivuVoiceAction' "$PROJECT_DIR/Telivu/Screens/TelivuHomeView.swift"
+rg -q '\.safeAreaInset' "$PROJECT_DIR/Telivu/Screens/TelivuHomeView.swift"
+rg -q 'TelivuCompanionPanel' "$PROJECT_DIR/Telivu/Screens/TelivuHomeView.swift"
+rg -q 'TelivuAttachmentSummary' "$PROJECT_DIR/Telivu/Screens/TelivuHomeView.swift"
+rg -q 'case processing' "$PROJECT_DIR/Telivu/Models/TelivuHomeModel.swift"
+rg -q 'case responseReady' "$PROJECT_DIR/Telivu/Models/TelivuHomeModel.swift"
+rg -q 'NOT FOR DIAGNOSIS OR EMERGENCIES' "$PROJECT_DIR/Telivu/Components/TelivuComponents.swift"
 
 echo "Telivu UI structural validation passed."
